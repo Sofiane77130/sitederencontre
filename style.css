@@ -1,0 +1,13 @@
+.bg-light {
+    background: #2980b9 !important;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .3);
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: white;
+}
+.navbar-light .navbar-nav .nav-link:hover, .nav-link:focus {
+    color: white;
+    border-bottom: 2px solid white;
+    padding-bottom: 5px;
+}
