@@ -1,108 +1,88 @@
 <?php
-session_start();
 
 require_once('connexiondb.php');
-$DB = new ConnexionDB;
-$BDD = $DB->connexion();
-if(isset($_POST)){
-    #extract($_POST);
-    #$valid = (boolean) true;
+# message de error
+$alert = '';
+session_start();
+if (!empty($_SESSION['active'])) {
+    header('location: principal.php');
+} else {
 
-    // var_dump($_POST);
-    if(!empty($_POST['pseudo']) && !empty($_POST['mail']) && !empty($_POST['password'])){
-        $pseudo = $_POST['pseudo']  ;
-        $mail = $_POST['mail'] ;
-        $password = $_POST['password'] ;
-        // $jour=  $jour;
-        // $mois=  $mois;
-        // $annee=  $annee;
-        
-        // $date_naissance=  null;
+    if (!empty($_POST)) {
 
-       
-        
-            $req = $BDD->prepare("SELECT utilisateur (pseudo, mail, password)   VALUES (?, ?, ?)");
-            if ($req->execute(array($pseudo, $mail, $password))) {
-                echo 'Bravo votre inscription à été validé';
-                $_SESSION['id'] = rand(1, 1000);
-                $_SESSION['pseudo'] = $pseudo;
-                $_SESSION['mail'] = $mail;
-                if(isset($_SESSION['id'])){
-                //   echo '<pre>';
-                    // print_r($_SESSION);
-                    header('location:/');
-                echo "Bonjour " . $_SESSION['pseudo'];
-                }else{
-                    '<h1>Bienvenue</h1>';
-                }
-            } 
-        
-            
-        
+        // var_dump($_POST);
+        if (!empty($_POST['pseudo']) && !empty($_POST['mail']) && !empty($_POST['password'])) {
+            $pseudo = htmlentities($_POST['pseudo']);
+            $mail = htmlentities($_POST['mail']);
+            $password = md5(htmlentities($_POST['password']));
+            // $jour=  $jour;
+            // $mois=  $mois;
+            // $annee=  $annee;
+            // $date_naissance=  null;
+            $DB = new ConnexionDB;
+            $BDD = $DB->connexion();
+            # compare si l'email et password sont egales à l'uns de la bd
+            $req = $BDD->query("SELECT * FROM utilisateur WHERE mail = '$mail' AND password = '$password' ");
+
+            $statement = $req->execute();
+
+            $data = $req->fetchAll(PDO::FETCH_ASSOC);
+
+            # si les donnes sont correct SESSION est initializé
+            if ($data) {
+
+                $_SESSION['active'] = true;
+                $_SESSION['utilisateur'] = $data['pseudo'];
+                $_SESSION['mail'] = $data['mail'];
+
+                header('location: principal.php');
+            } else {
+                $alert = 'Email, Password ou Pseudo Incorrect';
+                session_destroy();
+            }
+        }
     }
-    $req = $BDD->prepare("SELECT mail, password FROM utilisateur WHERE  = ? AND password = ?");
- 
-
 }
-        
 
-        
-    
 
-    
-    
-    ?>
+
+?>
+
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-        <link rel="stylesheet" href="style.css">
-
-    <title>Connexion</title>
-</head>
-
-<body>
 <?php
-     require_once('menu.php');
-     if(isset($_SESSION['id'])){
-        //   echo '<pre>';
-            // print_r($_SESSION);
-        echo "Bonjour " . $_SESSION['pseudo'];
-        }else{
-            '<h1>Bienvenue</h1>';
-        }
-    ?>
-    
- <h1>Se connecter</h1>
- <form method="post">
-       <section>
-           <div>
-               <?php
-                    if(isset($err_pseudo)){
-                        echo $err_pseudo;
-                    }
-                    ?>
-                    <?php
-                   ?>
-               <input type="text" name="pseudo" placeholder="Pseudo">
-           </div>
-           <div>
-                <input type="text" name="mail" placeholder="Mail">
+include 'menu.php';
+
+?>
+
+<h1>Se connecter</h1>
+
+<div class="container">
+    <form method="post">
+        <section class="form-container col-sm-6">
+            <div class="col-md-12 mb-3">
+                <?php
+                if (isset($err_pseudo)) {
+                    echo $err_pseudo;
+                }
+                ?>
+                <?php
+                ?>
+                <input type="text" name="pseudo" placeholder="Pseudo" class="form-control">
             </div>
-            <div>
-                <input type="password" name="password" placeholder="Mot de passe">
+            <div class="col-md-12 mb-3">
+                <input type="text" name="mail" placeholder="Mail" class="form-control">
             </div>
-            <div>
-                   <!-- <select name="jour">
+            <div class="col-md-12 mb-3">
+                <input type="password" name="password" placeholder="Mot de passe" class="form-control">
+            </div>
+            <div class="col-md-12">
+                <div class="alert" style="color: red;"><?= isset($alert) ? $alert : ''; ?></div>
+            </div>
+            <div class="col-md-12">
+                <!-- <select name="jour">
                        <option value="1">1</option>
                        <option value="1">2</option>
                      </select>
@@ -110,26 +90,31 @@ if(isset($_POST)){
                        <option value="Janvier">Janvier</option>
                        <option value="Février">Février</option>
                      </select> -->
-                    <!--  <select name="annee">
+                <!--  <select name="annee">
                        <option value="1990">1990</option>
                        <option value="2000">2000</option>
                      </select> -->
-                     </div>
-                     
-</section>
-        <input type="submit" name="inscription" value="Se connecter">
+            </div>
+
+            <div class="col-sm-12">
+                <input class=" col-sm-12 btn btn-primary btn-lg" type="submit" name="connexion" value="Se connecter">
+            </div>
+        </section>
+
     </form>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+</div>
+
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
 </body>
 
 </html>
