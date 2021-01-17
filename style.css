@@ -11,3 +11,12 @@
     border-bottom: 2px solid white;
     padding-bottom: 5px;
 }
+
+figure img {
+    width: 100vw;
+    height: 100vh;
+}
+
+.form-container {
+    margin: 5rem auto;
+}
