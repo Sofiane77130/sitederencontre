@@ -5,13 +5,13 @@ require_once('connexiondb.php');
 $alert = '';
 session_start();
 if (!empty($_SESSION['active'])) {
-    header('location: principal.php');
+    header('location: principal.php');echo "test";
 } else {
-
+   
     if (!empty($_POST)) {
-
-        // var_dump($_POST);
-        if (!empty($_POST['pseudo']) && !empty($_POST['mail']) && !empty($_POST['password'])) {
+        
+        
+        if (!empty($_POST['pseudo']) && !empty($_POST['mail']) && !empty($_POST['password'])) { 
             $pseudo = htmlentities($_POST['pseudo']);
             $mail = htmlentities($_POST['mail']);
             $password = md5(htmlentities($_POST['password']));
@@ -29,11 +29,14 @@ if (!empty($_SESSION['active'])) {
             $data = $req->fetchAll(PDO::FETCH_ASSOC);
 
             # si les donnes sont correct SESSION est initializé
+            
             if ($data) {
-
+                echo "<pre>";
+                
                 $_SESSION['active'] = true;
-                $_SESSION['utilisateur'] = $data['pseudo'];
-                $_SESSION['mail'] = $data['mail'];
+                $_SESSION['utilisateur'] = $data[0]['pseudo'];
+                $_SESSION['id'] = $data[0]['id'];
+                $_SESSION['mail'] = $data[0]['mail'];
 
                 header('location: principal.php');
             } else {

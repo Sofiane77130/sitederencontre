@@ -20,3 +20,33 @@ figure img {
 .form-container {
     margin: 5rem auto;
 }
+
+
+/* Membres */
+
+.membre-corps{
+background: white;
+text-align: center;
+box-shadow: 5px 5px 15px rgba(0, 0, 0, .3);
+border-radius: 10px;
+padding: 5px 20px;
+margin: 15px 0;
+}
+.mambre-btn{
+    margin: 20px 0;
+}
+.membre-btn-voir{
+    background-color: #2980b9;
+    color:white;
+    text-decoration:none;
+    outline:none;
+    border-radius: 10px;
+    padding: 5px 20px;
+    transition:ease-in .5s all;
+}
+.membre-btn-voir:hover{
+    transition: ease-out .5s all;
+    color:white;
+    text-decoration: none;
+    background: rgba(41,128,185, .9);
+}

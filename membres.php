@@ -1,10 +1,11 @@
 <?php
 session_start();
 require_once('connexiondb.php');
+
 $afficher_membres= $BDD->prepare("SELECT * FROM utilisateur");
 
 $afficher_membres->execute();
-
+// var_dump($_SESSION);
 ?>
 <!DOCTYPE html>
 <html lang="en">

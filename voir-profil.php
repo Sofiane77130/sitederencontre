@@ -1,9 +1,31 @@
 <?php
 session_start();
 require_once('connexiondb.php');
-$afficher_membres= $BDD->prepare("SELECT * FROM utilisateur");
 
-$afficher_membres->execute();
+$utilisateur_id= (int) trim($_GET['id']);
+
+echo $utilisateur_id;
+
+if(empty($utilisateur_id)){
+    header('location: /membres.php');
+    exit;
+}
+
+$req= $BDD->prepare("SELECT * FROM utilisateur WHERE id = ?");
+
+
+$req->execute(array($utilisateur_id));
+
+$voir_utilisateur = $req->fetch();
+
+if(!isset($voir_utilisateur['id'])){
+    header('location: /membres.php');
+    exit;
+}
+$repDep= $BDD->prepare("SELECT * FROM departement WHERE departement_id = ?");
+
+$repDep->execute(array($voir_utilisateur['departement']));
+$voir_departement = $repDep->fetch();
 
 ?>
 <!DOCTYPE html>
@@ -13,7 +35,7 @@ $afficher_membres->execute();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="style.css">
-    <title>Membres</title>
+    <title> Profil de <?= $voir_utilisateur['pseudo'] ?> </title>
 </head>
 <body>
   
@@ -22,22 +44,28 @@ $afficher_membres->execute();
     ?>
 <div class="container">
     <div class="row">
-        <?php
-        foreach($afficher_membres as $am){
-        ?> 
-            <div class="col-sm-3">
+       
+            <div class="col-sm-12">
                 <div class="membre-corps">
                     <div>
-                        <?= $am['pseudo'] ?>
+                        Pseudo : <?= $voir_utilisateur['pseudo'] ?>
+                    
                     </div>
-                    <div class="mambre-btn">
-                        <a href="voir-profil.php?id=<?= $am['id'] ?>" class="membre-btn-voir">Voir</a>
+                    <div>
+                        Département : <?= $voir_departement['departement_nom'] ?>
+                    
                     </div>
+                    <?php
+                    if (!empty($voir_utilisateur['annonces'])){
+                        echo "
+                    <div>
+                        Annonce : $voir_utilisateur[annonces] 
+                    
+                    </div>";
+                     }
+                    ?>
                 </div>
            </div> 
-        <?php
-        }
-        ?>      
     </div>  
 </div>
 

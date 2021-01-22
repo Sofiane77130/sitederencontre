@@ -1,9 +1,28 @@
 <?php
 session_start();
 require_once('connexiondb.php');
-$afficher_membres= $BDD->prepare("SELECT * FROM utilisateur");
+$utilisateur_id= (int) $_SESSION['id'];
 
-$afficher_membres->execute();
+echo $utilisateur_id;
+if(empty($utilisateur_id)){
+    header('location: membres.php');
+    exit;
+}
+
+$req= $BDD->prepare("SELECT * FROM utilisateur WHERE id = ?");
+
+$req->execute(array($utilisateur_id));
+
+$voir_utilisateur = $req->fetch();
+
+if(!isset($voir_utilisateur['id'])){
+    header('location: membres.php');
+    exit;
+}
+$repDep= $BDD->prepare("SELECT * FROM departement WHERE departement_id = ?");
+
+$repDep->execute(array($voir_utilisateur['departement']));
+$voir_departement = $repDep->fetch();
 
 ?>
 <!DOCTYPE html>
@@ -13,7 +32,7 @@ $afficher_membres->execute();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="style.css">
-    <title>Membres</title>
+    <title> Profil de <?= $voir_utilisateur['pseudo'] ?> </title>
 </head>
 <body>
   
@@ -22,25 +41,31 @@ $afficher_membres->execute();
     ?>
 <div class="container">
     <div class="row">
-        <?php
-        foreach($afficher_membres as $am){
-        ?> 
-            <div class="col-sm-3">
+       
+            <div class="col-sm-12">
                 <div class="membre-corps">
                     <div>
-                        <?= $am['pseudo'] ?>
+                        Pseudo : <?= $voir_utilisateur['pseudo'] ?>
+                    
                     </div>
-                    <div class="mambre-btn">
-                        <a href="voir-profil.php?id=<?= $am['id'] ?>" class="membre-btn-voir">Voir</a>
+                    <div>
+                        Département : <?= $voir_departement['departement_nom'] ?>
+                    
                     </div>
+                    <?php
+                    if (!empty($voir_utilisateur['annonces'])){
+                        echo "<div>
+                       Mon annonce :  $voir_utilisateur[annonces] <a href='supprimer.php?id=$voir_utilisateur[id]' > supprimer</a>
+                    
+                    </div>
+                    ";
+                     }
+                    ?>
+                  
                 </div>
            </div> 
-        <?php
-        }
-        ?>      
     </div>  
 </div>
-
   
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

@@ -85,8 +85,20 @@ include  'menu.php';
             </div>
             <div class="col-auto col-sm-4 mb-4">
                 <select class="dropdown btn btn-outline-secondary" name="departement">
-                    <option value="Seine et Marne">Seine et Marne</option>
-                    <option value="Yonne">Yonne</option>
+                   <?php
+                   $req = $BDD->prepare("SELECT departement_code, departement_nom FROM departement");
+                   $req->execute();
+                   $voir_departement = $req->fetchAll();
+                   
+                   foreach($voir_departement as $vd){
+                   ?> 
+                   <option value="<?= $vd['departement_code']?>"><?= $vd['departement_nom']?></option>
+                   <?php   
+                   }
+                ?>
+                
+                
+                
                 </select>
 
             </div>

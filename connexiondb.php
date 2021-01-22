@@ -26,6 +26,7 @@ function __construct(){
       return $this->connexion;
    }
 }
-
+$DB = new ConnexionDB;
+$BDD = $DB->connexion();
 
 ?>
