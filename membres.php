@@ -31,6 +31,9 @@ $afficher_membres->execute();
                     <div>
                         <?= $am['pseudo'] ?>
                     </div>
+                    <div>
+                        <?= $am['Titre'] ?>
+                    </div>
                     <div class="mambre-btn">
                         <a href="voir-profil.php?id=<?= $am['id'] ?>" class="membre-btn-voir">Voir</a>
                     </div>

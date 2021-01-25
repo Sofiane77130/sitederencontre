@@ -16,13 +16,28 @@ $req->execute(array($utilisateur_id));
 $voir_utilisateur = $req->fetch();
 
 if(!isset($voir_utilisateur['id'])){
-    header('location: membres.php');
-    exit;
+    // header('location: membres.php');
+    // exit;
 }
 $repDep= $BDD->prepare("SELECT * FROM departement WHERE departement_id = ?");
 
 $repDep->execute(array($voir_utilisateur['departement']));
 $voir_departement = $repDep->fetch();
+
+// ****************************************************************
+if(!empty($_POST['annonces'])){
+$annonces =($_POST['annonces']);
+$id=($voir_utilisateur['id']);
+$DB = new ConnexionDB;
+$BDD = $DB->connexion(); 
+$req= ("UPDATE utilisateur SET annonces=:annonces  WHERE id =:id ");
+$query = $BDD->prepare($req);
+$query->bindValue (':annonces', $annonces, PDO::PARAM_STR);
+$query->bindValue (':id', $id, PDO::PARAM_INT);
+// var_dump("$_POST[annonces]");
+$query->execute();
+header('location: membres.php');
+}
 
 ?>
 <!DOCTYPE html>
@@ -32,7 +47,7 @@ $voir_departement = $repDep->fetch();
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="style.css">
-    <title> Profil de <?= $voir_utilisateur['pseudo'] ?> </title>
+    <title> Passer une annonce </title>
 </head>
 <body>
   
@@ -44,15 +59,6 @@ $voir_departement = $repDep->fetch();
        
             <div class="col-sm-12">
                 <div class="membre-corps">
-                <?php
-                    if (!empty($voir_utilisateur['Titre'])){
-                        echo "
-                    <div>
-                        Titre : $voir_utilisateur[Titre] 
-                    
-                    </div>";
-                     }
-                    ?>
                     <div>
                         Pseudo : <?= $voir_utilisateur['pseudo'] ?>
                     
@@ -61,16 +67,15 @@ $voir_departement = $repDep->fetch();
                         Département : <?= $voir_departement['departement_nom'] ?>
                     
                     </div>
-                    <?php
-                    if (!empty($voir_utilisateur['annonces'])){
-                        echo "<div>
-                       Mon annonce :  $voir_utilisateur[annonces] <a href='supprimer.php?id=$voir_utilisateur[id]' > supprimer</a> <a href='modifier.php?id=$voir_utilisateur[id]'> modifier l'annonce </a>
-                    
+                    <form method="POST" action="">
+                    <div class="col-md-12">
+                    <label for="Titre">Titre<span class="blue"></span></label>
+                    <textarea name="Titre" id="Titre" class="form-control" placeholder= "Votre Titre" rowq="4"></textarea>
+                    <label for="annonces">Votre annonce<span class="blue"></span></label>
+                    <textarea name="annonces" id="annonces" class="form-control" placeholder= "Votre annonce" rowq="4"></textarea>
                     </div>
-                    ";
-                     }
-                    ?>
-                  
+                    <input type="submit">
+                    </form>
                 </div>
            </div> 
     </div>  

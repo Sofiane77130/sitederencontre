@@ -27,12 +27,14 @@ $voir_departement = $repDep->fetch();
 // ****************************************************************
 if(!empty($_POST['annonces'])){
 $annonces =($_POST['annonces']);
+$Titre =($_POST['Titre']);
 $id=($voir_utilisateur['id']);
 $DB = new ConnexionDB;
 $BDD = $DB->connexion(); 
-$req= ("UPDATE utilisateur SET annonces=:annonces  WHERE id =:id ");
+$req= ("UPDATE utilisateur SET Titre=:Titre, annonces=:annonces  WHERE id =:id ");
 $query = $BDD->prepare($req);
 $query->bindValue (':annonces', $annonces, PDO::PARAM_STR);
+$query->bindValue (':Titre', $Titre, PDO::PARAM_STR);
 $query->bindValue (':id', $id, PDO::PARAM_INT);
 // var_dump("$_POST[annonces]");
 $query->execute();
@@ -59,6 +61,10 @@ header('location: membres.php');
        
             <div class="col-sm-12">
                 <div class="membre-corps">
+                <div>
+                        Titre : <?= $voir_utilisateur['Titre'] ?>
+                    
+                    </div>
                     <div>
                         Pseudo : <?= $voir_utilisateur['pseudo'] ?>
                     
@@ -69,6 +75,8 @@ header('location: membres.php');
                     </div>
                     <form method="POST" action="">
                     <div class="col-md-12">
+                    <label for="Titre">Titre<span class="blue"></span></label>
+                    <textarea name="Titre" id="Titre" class="form-control" placeholder= "Votre Titre" rowq="4"></textarea>
                     <label for="annonces">Votre annonce<span class="blue"></span></label>
                     <textarea name="annonces" id="annonces" class="form-control" placeholder= "Votre annonce" rowq="4"></textarea>
                     </div>

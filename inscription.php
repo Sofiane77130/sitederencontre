@@ -13,6 +13,15 @@ if (!empty($_SESSION['active'])) {
 
         // var_dump($_POST);
         if (!empty($_POST['pseudo']) && !empty($_POST['mail']) && !empty($_POST['password']) && !empty($_POST['departement'])) {
+            
+            $dest = $_POST['mail'];
+            $sujet = "Validation de votre inscription";
+            $message = "Félicitation votre inscription est un succès, pour valider votre compte cliquez sur le lien <a href=valid.php?status=1> clique ici <a/>";
+            $headers = "From: sofiane.codeur77@gmail.com";
+            // $headers .= "ajout de texte et de utf8";
+            // $headers .= "ajout +++";
+
+mail($dest, $sujet, $message, $headers);
             $pseudo = htmlentities($_POST['pseudo']);
             $mail = filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL);
             $password = md5($_POST['password']);
@@ -36,7 +45,7 @@ if (!empty($_SESSION['active'])) {
     }
 }
 
-
+ 
 
 ?>
 

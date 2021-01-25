@@ -47,6 +47,15 @@ $voir_departement = $repDep->fetch();
        
             <div class="col-sm-12">
                 <div class="membre-corps">
+                <?php
+                    if (!empty($voir_utilisateur['Titre'])){
+                        echo "
+                    <div>
+                        Titre : $voir_utilisateur[Titre] 
+                    
+                    </div>";
+                     }
+                    ?>
                     <div>
                         Pseudo : <?= $voir_utilisateur['pseudo'] ?>
                     
