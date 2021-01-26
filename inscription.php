@@ -16,18 +16,39 @@ if (!empty($_SESSION['active'])) {
             
             $dest = $_POST['mail'];
             $sujet = "Validation de votre inscription";
-            $message = "Félicitation votre inscription est un succès, pour valider votre compte cliquez sur le lien <a href=valid.php?status=1> clique ici <a/>";
-            $headers = "From: sofiane.codeur77@gmail.com";
-            // $headers .= "ajout de texte et de utf8";
-            // $headers .= "ajout +++";
+            $message ='<!DOCTYPE html>
+                <html lang="fr">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Document</title>
+                </head>
+                <body>
+                <a href="http://localhost/sitederencontre2/sitederencontre/valid.php?status=1&email='.$dest.'" target="_blank">Cliquez ici pour valider votrer compte <a/> 
+                </body>
+                </html>';
 
-mail($dest, $sujet, $message, $headers);
+            
+            // $message = "Felicitation votre inscription est un succes, pour valider votre compte cliquez sur le lien <a href=valid.php?status=1> clique ici <a/>";
+            $headers="MIME-Version: 1.0\r\n";
+            $headers = "From: sofiane.codeur77@gmail.com";
+            $headers.='Content-Type:text/html; charset=\"iso-8859-1\"';
+            // $headers.="Content-Type:text/html; charset=\"iso-8859-1\"";
+            // $headers.='Content-Type:text/html; charset="UTF-8"'."\n";
+            // $headers.='Content-Transfer-Encoding: 8bit';
+
+            
+
+        
+
+        mail($dest, $sujet, $message, $headers);
             $pseudo = htmlentities($_POST['pseudo']);
             $mail = filter_var($_POST['mail'], FILTER_VALIDATE_EMAIL);
             $password = md5($_POST['password']);
             // $jour=  $jour;
             // $mois=  $mois;
             // $annee=  $annee;
+            // $_SESSION['identifiant'] = time() . $pseudo;
             $departement = htmlentities($_POST['departement']);
             // $date_naissance=  null;
 
@@ -37,6 +58,7 @@ mail($dest, $sujet, $message, $headers);
             $req = $BDD->prepare("INSERT INTO utilisateur (pseudo, mail, password, departement)   VALUES (?, ?, ?, ?)");
             # si 
             if ($req->execute(array($pseudo, $mail, $password, $departement))) {
+
                 header('location: connexion.php');
             }
         } else {
